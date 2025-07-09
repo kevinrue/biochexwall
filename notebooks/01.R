@@ -43,3 +43,27 @@ ggplot(image_xy_coords, aes(col, row)) +
   theme_void() +
   coord_fixed()
 
+# downsample xy coordinates every N rows and columns
+downsample_factor <- 10
+keep_rows <- seq(1, max(image_xy_coords[, "row"]), by = downsample_factor)
+keep_cols <- seq(1, max(image_xy_coords[, "col"]), by = downsample_factor)
+image_xy_coords_downsampled <- image_xy_coords[image_xy_coords[, "row"] %in% keep_rows & 
+                                                  image_xy_coords[, "col"] %in% keep_cols, ]
+
+ggplot(image_xy_coords_downsampled, aes(col, row)) +
+  geom_point() +
+  labs(x = "Columns", y = "Rows", title = "Scatter Plot of Image Data") +
+  theme_void() +
+  coord_fixed()
+
+# shift every other row by half the horizontal distance between points
+rows_to_shift <- keep_rows[seq(2, length(keep_rows), by = 2)]
+rows_to_shift <- image_xy_coords_downsampled[, "row"] %in% rows_to_shift
+image_xy_coords_downsampled[rows_to_shift, "col"] <- image_xy_coords_downsampled[rows_to_shift,"col"] + downsample_factor / 2
+
+ggplot(image_xy_coords_downsampled, aes(col, row)) +
+  geom_point(size = 0.1) +
+  labs(x = "Columns", y = "Rows", title = "Scatter Plot of Image Data") +
+  theme_void() +
+  coord_fixed()
+
