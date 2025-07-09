@@ -7,4 +7,5 @@ biochexwall.Rproj
 renv/
 renv.lock
 img/stickers/
-
+img/stickers_cropped/
+img/outputs/
