@@ -78,3 +78,18 @@ gg <- ggplot(image_xy_coords_downsampled, aes(col, row)) +
   coord_fixed()
 
 ggsave("img/biochexwall.png", gg, width = 20, height = 20, dpi = 300)
+
+sticker_files <- list.files("img/stickers", full.names = TRUE, pattern = "\\.png$")
+sticker_files <- sticker_files[!grepl("CSAMA2019", sticker_files)]
+
+final_df <- data.frame(
+  image_xy_coords_downsampled,
+  image = c(sticker_files, sticker_files[1:(nrow(image_xy_coords_downsampled) - length(sticker_files))])
+)
+
+gg <- ggplot(final_df, aes(col, row)) +
+  geom_image(aes(image = image), size = 0.017) +
+  labs(x = "Columns", y = "Rows", title = "Scatter Plot of Image Data") +
+  theme_void() +
+  coord_fixed()
+ggsave("img/biochexwall-mixed.png", gg, width = 20, height = 20, dpi = 300)
