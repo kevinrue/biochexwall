@@ -21,7 +21,10 @@ image_data <- imageData(img_th)
 
 storage.mode(image_data) <- "double"
 
-heatmap(t(image_data)[seq(nrow(image_data), 1, -1), ], 
+# change coordinates to x axis increasing left to right and y axis increasing bottom to top
+image_data_plot <- t(image_data)[seq(nrow(image_data), 1, -1), ]
+
+heatmap(image_data_plot, 
       Rowv = NA, 
       Colv = NA, 
       col = gray.colors(256), 
@@ -29,3 +32,14 @@ heatmap(t(image_data)[seq(nrow(image_data), 1, -1), ],
       xlab = "Columns", 
       ylab = "Rows", 
       main = "Heatmap of Image Data")
+
+# make a scatter plot using ggplot
+library(ggplot2)
+image_xy_coords <- which(image_data_plot > 0, arr.ind = TRUE)
+
+ggplot(image_xy_coords, aes(col, row)) +
+  geom_point() +
+  labs(x = "Columns", y = "Rows", title = "Scatter Plot of Image Data") +
+  theme_void() +
+  coord_fixed()
+
