@@ -1,0 +1,26 @@
+---
+title: "Test 01"
+format: html
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+```{r}
+# import img/biocnote.jpg and return pixel coordinates that are not white
+library(magick)
+img <- image_read("../img/biocnote.jpg")
+img
+```
+
+```{r}
+img <- image_transparent(img, "white", fuzz = 0.1)
+img
+```
+
+```{r}
+# convert to grayscale
+img <- image_convert(img, colorspace = "gray")
+img
+```
