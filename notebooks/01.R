@@ -77,7 +77,7 @@ gg <- ggplot(image_xy_coords_downsampled, aes(col, row)) +
   theme_void() +
   coord_fixed()
 
-ggsave("img/biochexwall.png", gg, width = 20, height = 20, dpi = 300)
+ggsave("img/outputs/biochexwall.png", gg, width = 20, height = 20, dpi = 300)
 
 sticker_files <- list.files("img/stickers_cropped", full.names = TRUE, pattern = "\\.png$")
 # sticker_files <- sticker_files[!grepl("CSAMA2019", sticker_files)]
@@ -88,12 +88,12 @@ final_df <- data.frame(
 )
 
 gg <- ggplot(final_df, aes(col, row)) +
-  geom_image(aes(image = image), size = 0.017) +
+  geom_image(aes(image = image), size = 0.015) +
   coord_fixed() +
   labs(x = NULL, y = NULL) +
   theme_void() +
   theme(
     plot.background = element_rect(fill = "white", color = NA)
   )
-ggsave("img/biochexwall-mixed-600.png", gg, width = 20, height = 20, dpi = 600)
+ggsave("img/outputs/biochexwall-mixed-600.png", gg, width = 20, height = 20, dpi = 600)
 
