@@ -44,9 +44,10 @@ ggplot(image_xy_coords, aes(col, row)) +
   coord_fixed()
 
 # downsample xy coordinates every N rows and columns
-downsample_factor <- 20
-keep_rows <- seq(1, max(image_xy_coords[, "row"]), by = downsample_factor)
-keep_cols <- seq(1, max(image_xy_coords[, "col"]), by = downsample_factor)
+downsample_x <- 20
+downsample_y <- 17
+keep_rows <- seq(1, max(image_xy_coords[, "row"]), by = downsample_y)
+keep_cols <- seq(1, max(image_xy_coords[, "col"]), by = downsample_x)
 image_xy_coords_downsampled <- image_xy_coords[image_xy_coords[, "row"] %in% keep_rows & 
                                                   image_xy_coords[, "col"] %in% keep_cols, ]
 
@@ -59,13 +60,13 @@ ggplot(image_xy_coords_downsampled, aes(col, row)) +
 # shift every other row by half the horizontal distance between points
 rows_to_shift <- keep_rows[seq(2, length(keep_rows), by = 2)]
 rows_to_shift <- image_xy_coords_downsampled[, "row"] %in% rows_to_shift
-image_xy_coords_downsampled[rows_to_shift, "col"] <- image_xy_coords_downsampled[rows_to_shift,"col"] + downsample_factor / 2
+image_xy_coords_downsampled[rows_to_shift, "col"] <- image_xy_coords_downsampled[rows_to_shift,"col"] + downsample_x / 2
 
 ggplot(image_xy_coords_downsampled, aes(col, row)) +
   geom_point(size = 0.1) +
-  labs(x = "Columns", y = "Rows", title = "Scatter Plot of Image Data") +
-  theme_void() +
-  coord_fixed()
+  coord_fixed() +
+  labs(x = NULL, y = NULL) +
+  theme_void()
 
 # q: what ggplot function allows one to plot an image at given coordinates?
 # a: geom_image from the ggimage package
@@ -77,7 +78,7 @@ gg <- ggplot(image_xy_coords_downsampled, aes(col, row)) +
   theme_void() +
   coord_fixed()
 
-ggsave("img/outputs/biochexwall.png", gg, width = 20, height = 20, dpi = 300)
+ggsave("img/outputs/biochexwall.png", gg, width = 20, height = 20, dpi = 600)
 
 sticker_files <- list.files("img/stickers_cropped", full.names = TRUE, pattern = "\\.png$")
 # sticker_files <- sticker_files[!grepl("CSAMA2019", sticker_files)]
