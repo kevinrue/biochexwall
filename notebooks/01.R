@@ -76,7 +76,7 @@ ggplot(image_xy_coords_downsampled, aes(col, row)) +
 
 library(ggimage)
 gg <- ggplot(image_xy_coords_downsampled, aes(col, row)) +
-  geom_image(image = "img/Bioconductor-rh.png", size = 0.018) +
+  geom_image(image = "img/Bioconductor-rh.png", size = 0.02) +
   labs(x = "Columns", y = "Rows", title = "Scatter Plot of Image Data") +
   theme_void() +
   coord_fixed()
@@ -96,7 +96,7 @@ final_df <- data.frame(
 )
 
 gg <- ggplot(final_df, aes(col, row)) +
-  geom_image(aes(image = image), size = 0.018) +
+  geom_image(aes(image = image), size = 0.02) +
   coord_fixed() +
   labs(x = NULL, y = NULL) +
   theme_void() +
@@ -148,11 +148,14 @@ ordered_stickers_pool <- ordered_stickers_pool[1:nrow(image_xy_coords_downsample
 final_df <- data.frame(
   image_xy_coords_downsampled
 )
-final_df <- final_df[order(final_df$row, final_df$col),]
+# sort left to right, bottom to top
+# final_df <- final_df[order(final_df$row, final_df$col),]
+# sort by distance from bottom left corner
+final_df <- final_df[order(final_df$row^2 + final_df$col^2), ]
 final_df$image = ordered_stickers_pool[1:nrow(image_xy_coords_downsampled)]
 
 gg <- ggplot(final_df, aes(col, row)) +
-  geom_image(aes(image = image), size = 0.018) +
+  geom_image(aes(image = image), size = 0.02) +
   coord_fixed() +
   labs(x = NULL, y = NULL) +
   theme_void() +
