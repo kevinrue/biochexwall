@@ -1,4 +1,4 @@
-image_file <- "bioconductor_logo_note.png"
+image_file <- "img/biocnote-rh.png"
 
 # use EBImage to read the image
 library(EBImage)
@@ -46,8 +46,8 @@ ggplot(image_xy_coords, aes(col, row)) +
 # downsample xy coordinates every N rows and columns
 downsample_x <- 20
 downsample_y <- 17
-keep_rows <- seq(1, max(image_xy_coords[, "row"]), by = downsample_y)
-keep_cols <- seq(1, max(image_xy_coords[, "col"]), by = downsample_x)
+keep_rows <- seq(max(image_xy_coords[, "row"]) - 5, 1, by = -downsample_y)
+keep_cols <- seq(5, max(image_xy_coords[, "col"]), by = downsample_x)
 image_xy_coords_downsampled <- image_xy_coords[image_xy_coords[, "row"] %in% keep_rows & 
                                                   image_xy_coords[, "col"] %in% keep_cols, ]
 
@@ -56,6 +56,8 @@ ggplot(image_xy_coords_downsampled, aes(col, row)) +
   labs(x = "Columns", y = "Rows", title = "Scatter Plot of Image Data") +
   theme_void() +
   coord_fixed()
+
+dim(image_xy_coords_downsampled)
 
 # shift every other row by half the horizontal distance between points
 rows_to_shift <- keep_rows[seq(2, length(keep_rows), by = 2)]
@@ -99,7 +101,7 @@ gg <- ggplot(final_df, aes(col, row)) +
   theme(
     plot.background = element_rect(fill = "white", color = NA)
   )
-ggsave("img/outputs/biochexwall-mixed-600.png", gg, width = 20, height = 20, dpi = 600)
+ggsave("img/outputs/biochexwall-mixed-600dpi.png", gg, width = 20, height = 20, dpi = 600)
 
 # for each sticker in the pool, identify the predominant color
 get_mean_colour <- function(file) {
@@ -136,9 +138,10 @@ ordered_stickers_pool <- rep(ordered_stickers, 1 + nrow(image_xy_coords_downsamp
 ordered_stickers_pool <- ordered_stickers_pool[1:nrow(image_xy_coords_downsampled)]
 
 final_df <- data.frame(
-  image_xy_coords_downsampled,
-  image = ordered_stickers_pool[1:nrow(image_xy_coords_downsampled)]
+  image_xy_coords_downsampled
 )
+final_df <- final_df[order(final_df$row, final_df$col),]
+final_df$image = ordered_stickers_pool[1:nrow(image_xy_coords_downsampled)]
 
 gg <- ggplot(final_df, aes(col, row)) +
   geom_image(aes(image = image), size = 0.015) +
