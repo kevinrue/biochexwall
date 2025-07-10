@@ -50,6 +50,7 @@ for (infile in sticker_files) {
   coords_transparent <- which(imageData(nuc)[,,4] == 0, arr.ind = TRUE)
   storage.mode(coords_transparent) <- "double"
   coors_to_reset <- coords_transparent[geometry::inhulln(coords_chull, coords_transparent),]
+  coors_to_reset <- matrix(coors_to_reset, ncol = 2, dimnames = list(c(), c("row", "col")))
   # ggplot(as.data.frame(coors_to_reset), aes(row, -col)) +
   #   geom_point() +
   #   labs(x = "Columns", y = "Rows", title = "Scatter Plot of Solid Pixels") +
