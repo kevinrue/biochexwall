@@ -1,3 +1,4 @@
+library(EBImage)
 library(geometry)
 
 sticker_files <- list.files("img/stickers", full.names = TRUE, pattern = "\\.png$")
@@ -21,7 +22,7 @@ for (infile in sticker_files) {
   if (dim(nuc)[3] == 3) {
     nuc <- Image(abind(nuc, array(1, dim = c(dim(nuc)[1], dim(nuc)[2], 1)), along = 3), colormode = "Color")
   }
-  
+
   sum_rgb <- rowSums(nuc[, , 1:3], dims = 2)
   bg_colour <- ifelse(sum_rgb[1,1] == 0, "black", "white")
   if (bg_colour == "black") {
@@ -29,7 +30,7 @@ for (infile in sticker_files) {
   } else {
     bg_idx <- which(sum_rgb == 3, arr.ind = TRUE)
   }
-  
+
   # use row and column indices in bg_idx to set those pixels to transparent
   for (i in seq_len(nrow(bg_idx))) {
     row <- bg_idx[i, "row"]
@@ -37,7 +38,7 @@ for (infile in sticker_files) {
     nuc[row, col, 4] <- 0  # set alpha channel to 0 for background pixels
   }
   # display(nuc)
-  
+
   # identify coordinates of convex hull of solid pixels (where alpha channel is 1)
   coords_solid <- which(imageData(nuc)[,,4] == 1, arr.ind = TRUE)
   # ggplot(as.data.frame(coords_solid), aes(row, -col)) +
@@ -55,17 +56,17 @@ for (infile in sticker_files) {
   #   geom_point() +
   #   labs(x = "Columns", y = "Rows", title = "Scatter Plot of Solid Pixels") +
   #   coord_fixed()
-  
+
   for (i in seq_len(nrow(coors_to_reset))) {
     row <- coors_to_reset[i, "row"]
     col <- coors_to_reset[i, "col"]
     nuc[row, col, 4] <- 1  # restore alpha channel to 1 for pixels within convex hull
   }
-  
+
   # display(nuc)
-  
+
   # plot(coords_solid, type = "l", col = "red", lwd = 2, main = "Convex Hull of Solid Pixels")
-  
+
   # image_data_plot <- t(image_data)[seq(nrow(image_data), 1, -1), ]
   # heatmap(image_data_plot,
   #         Rowv = NA,
@@ -75,7 +76,7 @@ for (infile in sticker_files) {
   #         xlab = "Columns",
   #         ylab = "Rows",
   #         main = "Heatmap of Image Data")
-  
+
   writeImage(nuc, output_file, type = "png")
 }
 

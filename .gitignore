@@ -10,3 +10,4 @@ img/stickers/
 img/stickers_cropped/
 img/outputs/
 cache/
+.DS_Store
