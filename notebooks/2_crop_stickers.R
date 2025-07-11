@@ -28,7 +28,7 @@ for (infile in sticker_files) {
   if (bg_colour == "black") {
     bg_idx <- which(sum_rgb == 0, arr.ind = TRUE)
   } else {
-    bg_idx <- which(sum_rgb == 3, arr.ind = TRUE)
+    bg_idx <- which(sum_rgb > 2.98, arr.ind = TRUE) # bioCAsia 2025 I'm looking at you
   }
 
   # use row and column indices in bg_idx to set those pixels to transparent
