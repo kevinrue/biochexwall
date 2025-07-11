@@ -19,6 +19,9 @@ for (infile in sticker_files) {
   message("Processing ", infile)
   nuc = readImage(infile)
   # display(nuc)
+  if (infile == "img/stickers/NanoMethViz.png") {
+  	writeImage(nuc, output_file, type = "png")
+  }
   if (dim(nuc)[3] == 3) {
     nuc <- Image(abind(nuc, array(1, dim = c(dim(nuc)[1], dim(nuc)[2], 1)), along = 3), colormode = "Color")
   }
