@@ -1,3 +1,6 @@
+library(dplyr)
+library(ggimage)
+
 image_file <- "img/biocnote-rh.png"
 sticker_files <- list.files("img/stickers_cropped", full.names = TRUE, pattern = "\\.png$")
 
@@ -47,32 +50,57 @@ ggplot(image_xy_coords, aes(col, row)) +
   coord_fixed()
 
 # downsample xy coordinates every N rows and columns
-downsample_factor <- 1.27
-downsample_x <- round(20*downsample_factor)
-downsample_y <- round(17*downsample_factor)
-keep_rows <- seq(max(image_xy_coords[, "row"]) - 5, 1, by = -downsample_y)
-keep_cols <- seq(5, max(image_xy_coords[, "col"]), by = downsample_x)
-# downsample <- 20
-# keep_rows <- seq(max(image_xy_coords[, "row"]) - 5, 1, by = -downsample)
-# keep_cols <- seq(5, max(image_xy_coords[, "col"]), by = downsample)
+
+## different x and y to account for hexagonal geometry
+# downsample_factor <- 1.27
+# downsample_x <- round(20*downsample_factor)
+# downsample_y <- round(17*downsample_factor)
+# keep_rows <- seq(max(image_xy_coords[, "row"]) - 5, 1, by = -downsample_y)
+# keep_cols <- seq(5, max(image_xy_coords[, "col"]), by = downsample_x)
+
+## same x and y with mathematical fix later
+downsample <- 24
+keep_rows <- seq(max(image_xy_coords[, "row"]) - 5, 1, by = -downsample)
+keep_cols <- seq(5, max(image_xy_coords[, "col"]), by = downsample)
+
 image_xy_coords_downsampled <- as.data.frame(image_xy_coords[image_xy_coords[, "row"] %in% keep_rows & image_xy_coords[, "col"] %in% keep_cols, ])
 
 ggplot(image_xy_coords_downsampled, aes(col, row)) +
 	geom_point() +
 	labs(x = "Columns", y = "Rows", title = "Scatter Plot of Image Data") +
-	theme_void() +
+	theme_bw() +
 	coord_fixed()
 
 # shift every other row by half the horizontal distance between points
 rows_to_shift <- keep_rows[seq(2, length(keep_rows), by = 2)]
 rows_to_shift <- image_xy_coords_downsampled[, "row"] %in% rows_to_shift
-image_xy_coords_downsampled[rows_to_shift, "col"] <- image_xy_coords_downsampled[rows_to_shift,"col"] + downsample_x / 2
+# image_xy_coords_downsampled[rows_to_shift, "col"] <- image_xy_coords_downsampled[rows_to_shift,"col"] + downsample_x / 2
+image_xy_coords_downsampled[rows_to_shift, "col"] <- image_xy_coords_downsampled[rows_to_shift,"col"] + downsample / 2
 
 ggplot(image_xy_coords_downsampled, aes(col, row)) +
-	geom_point(size = 0.1) +
+	geom_point() +
 	coord_fixed() +
 	labs(x = NULL, y = NULL) +
-	theme_void()
+	theme_bw()
+
+# shift every row from the second onwards, downwards to stack them tighter
+unique_row_values <- sort(unique(image_xy_coords_downsampled$row))
+downward_shift <- data.frame(
+	row_value = unique_row_values,
+	shift = seq_along(unique_row_values) - 1
+)
+
+for (i in seq(1, nrow(downward_shift))) {
+	target_row <- downward_shift$row_value[i]
+	current_values <- image_xy_coords_downsampled[image_xy_coords_downsampled[, "row"] == target_row, "row"]
+	image_xy_coords_downsampled[image_xy_coords_downsampled[, "row"] == target_row, "row"] <- current_values - downward_shift$shift[i] * (downsample / 8)
+}
+
+ggplot(image_xy_coords_downsampled, aes(col, row)) +
+	geom_point() +
+	coord_fixed() +
+	labs(x = NULL, y = NULL) +
+	theme_bw()
 
 diff <- nrow(image_xy_coords_downsampled) - length(sticker_files)
 if (diff > 0) {
@@ -91,10 +119,10 @@ image_xy_coords_ordered <- image_xy_coords_downsampled %>%
 
 
 ggplot(image_xy_coords_ordered, aes(col, row)) +
-	geom_point(aes(colour = index), size = 2) +
+	geom_point(aes(colour = index), size = 2, show.legend = FALSE) +
 	coord_fixed() +
 	labs(x = NULL, y = NULL) +
-	theme_void()
+	theme_bw()
 
 # order coordinates by sum of xy coordinates
 # this should result in coordinates ordered as follows
@@ -107,6 +135,7 @@ sticker_ordered <- read.table("cache/sticker_colours_ordered.txt", header = TRUE
 head(sticker_ordered)
 
 sticker_files_pool <- rep(sprintf("img/stickers_cropped/%s.png", sticker_ordered$sticker), 1 + nrow(image_xy_coords_downsampled) %/% length(sticker_files))
+sticker_files_pool <- sticker_files_pool[seq(length(sticker_files_pool), 1, -1)]
 sticker_files_pool <- sticker_files_pool[1:nrow(image_xy_coords_ordered)]
 
 final_df <- data.frame(
@@ -115,7 +144,7 @@ final_df <- data.frame(
 )
 
 gg <- ggplot(final_df, aes(col, row)) +
-	geom_image(aes(image = image), size = 0.02) +
+	geom_image(aes(image = image), size = 0.022) +
 	coord_fixed() +
 	labs(x = NULL, y = NULL) +
 	theme_void() +
