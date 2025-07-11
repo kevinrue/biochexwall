@@ -15,6 +15,7 @@ for (url in urls) {
   destfile <- file.path("img/stickers", filename)
   if (!file.exists(destfile)) {
     tryCatch({
+      message(paste("Downloading", url))
       GET(url, write_disk(destfile, overwrite = TRUE))
     }, error = function(e) {
       message(paste("Failed to download", url, ":", e$message))

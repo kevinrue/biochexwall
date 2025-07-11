@@ -9,3 +9,4 @@ renv.lock
 img/stickers/
 img/stickers_cropped/
 img/outputs/
+cache/

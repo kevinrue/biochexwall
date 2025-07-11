@@ -84,6 +84,13 @@ gg <- ggplot(image_xy_coords_downsampled, aes(col, row)) +
 ggsave("img/outputs/biochexwall.png", gg, width = 20, height = 20, dpi = 600)
 
 sticker_files <- list.files("img/stickers_cropped", full.names = TRUE, pattern = "\\.png$")
+# remove a few duplicates in appearance to match the number of stickers in the hexwall
+sticker_files <- sticker_files[grep("BiocH3Africa2021.png", sticker_files, invert = TRUE)]
+sticker_files <- sticker_files[grep("CSAMA2022.png", sticker_files, invert = TRUE)]
+sticker_files <- sticker_files[grep("CSAMA2023.png", sticker_files, invert = TRUE)]
+sticker_files <- sticker_files[grep("CSAMA2025.png", sticker_files, invert = TRUE)]
+sticker_files <- sticker_files[grep("Bioconductor-rainbow.png", sticker_files, invert = TRUE)]
+sticker_files <- sticker_files[grep("Bioconductor-trans.png", sticker_files, invert = TRUE)]
 length(sticker_files)
 # sticker_files <- sticker_files[!grepl("CSAMA2019", sticker_files)]
 
@@ -105,9 +112,12 @@ gg <- ggplot(final_df, aes(col, row)) +
   )
 ggsave("img/outputs/biochexwall-mixed-600dpi.png", gg, width = 20, height = 20, dpi = 600)
 
+library(dplyr)
+
 # for each sticker in the pool, identify the predominant color
-get_mean_colour <- function(file) {
+get_sticker_colour <- function(file, mode = c("frequency", "mean", "top2", "top3", "top5")) {
   message(file)
+  mode <- match.arg(mode)
   nuc = readImage(file)
   # display(nuc)
   nuc_data = imageData(nuc)[, , 1:3]
@@ -118,19 +128,60 @@ get_mean_colour <- function(file) {
   nuc_df[, "R"] <- mapply(function(row, col) nuc_data[row, col, 1], row = nuc_df$row, col = nuc_df$col)
   nuc_df[, "G"] <- mapply(function(row, col) nuc_data[row, col, 2], row = nuc_df$row, col = nuc_df$col)
   nuc_df[, "B"] <- mapply(function(row, col) nuc_data[row, col, 3], row = nuc_df$row, col = nuc_df$col)
-  # nuc_df <- subset(nuc_df, R + G + B < 3)  # remove white pixels
-  mean_colour <- colMeans(nuc_df[, c("R", "G", "B")])
+  if (mode == "frequency") {
+    nuc_df <- nuc_df %>% 
+      select(R, G, B) %>% 
+      group_by(R, G, B) %>% 
+      summarise(n = n(), .groups = "drop") %>% 
+      ungroup() %>% 
+      arrange(desc(n)) %>% 
+      slice_head(n = 1)
+    mean_colour <- c(nuc_df[1, "R"], nuc_df[1, "G"], nuc_df[1, "B"])
+  } else if (mode == "mean") {
+    mean_colour <- colMeans(nuc_df[, c("R", "G", "B")])
+  } else if (mode == "top2") {
+    nuc_df <- nuc_df %>% 
+      select(R, G, B) %>% 
+      group_by(R, G, B) %>% 
+      summarise(n = n(), .groups = "drop") %>% 
+      ungroup() %>% 
+      arrange(desc(n)) %>% 
+      slice_head(n = 2)
+    mean_colour <- colMeans(nuc_df[, c("R", "G", "B")])
+  } else if (mode == "top3") {
+    nuc_df <- nuc_df %>% 
+      select(R, G, B) %>% 
+      group_by(R, G, B) %>% 
+      summarise(n = n(), .groups = "drop") %>% 
+      ungroup() %>% 
+      arrange(desc(n)) %>% 
+      slice_head(n = 3)
+    mean_colour <- colMeans(nuc_df[, c("R", "G", "B")])
+  } else if (mode == "top5") {
+    nuc_df <- nuc_df %>% 
+      select(R, G, B) %>% 
+      group_by(R, G, B) %>% 
+      summarise(n = n(), .groups = "drop") %>% 
+      ungroup() %>% 
+      arrange(desc(n)) %>% 
+      slice_head(n = 5)
+    mean_colour <- colMeans(nuc_df[, c("R", "G", "B")])
+  }
   rgb <- rgb(mean_colour[1], mean_colour[2], mean_colour[3])
+  # nuc_df <- subset(nuc_df, R + G + B < 3)  # remove white pixels
   message(rgb)
   rgb
 }
 
+sticker_color_mode <- "top5"
+sticker_color_file <- "cache/mean_colours.%s.rds"
+
 dir.create("cache", showWarnings = FALSE)
-if (file.exists("cache/mean_colours.rds")) {
-  mean_colours <- readRDS("cache/mean_colours.rds")
+if (file.exists(sticker_color_file)) {
+  mean_colours <- readRDS(sprintf(sticker_color_file, sticker_color_mode))
 } else {
-  mean_colours <- sapply(sticker_files, get_mean_colour, USE.NAMES = TRUE)
-  saveRDS(mean_colours, "cache/mean_colours.rds")
+  mean_colours <- sapply(sticker_files, get_sticker_colour, mode = sticker_color_mode, USE.NAMES = TRUE)
+  saveRDS(mean_colours, sprintf(sticker_color_file, sticker_color_mode))
 }
 
 library(TSP)
