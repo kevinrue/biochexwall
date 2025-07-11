@@ -6,7 +6,6 @@ library(dplyr)
 sticker_files <- list.files("img/stickers_cropped", full.names = TRUE)
 dir.create("cache", showWarnings = FALSE)
 
-
 make_data_frame <- function(image_file) {
 	message("Processing ", image_file)
 	img <- readImage(image_file)

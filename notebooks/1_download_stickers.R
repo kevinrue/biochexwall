@@ -20,5 +20,7 @@ for (url in urls) {
     }, error = function(e) {
       message(paste("Failed to download", url, ":", e$message))
     })
+  } else {
+  	message(paste("Skipping", filename))
   }
 }

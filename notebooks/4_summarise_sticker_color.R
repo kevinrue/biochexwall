@@ -1,4 +1,5 @@
 library(ggimage)
+library(dplyr)
 
 # One of
 summary_mode <- "average"
@@ -15,8 +16,9 @@ make_data_frame <- function(image_file) {
 	img_data <- imageData(img)
 	img_df <- expand.grid(row = 1:nrow(img), col = 1:ncol(img))
 	# crop outside hex
-	coords_transparent <- as.data.frame(which(img[ , , 4] == 0, arr.ind = TRUE))
-	img_df <- setdiff(img_df, coords_transparent)
+	coords_transparent <- as.data.frame(which(img_data[ , , 4] == 0, arr.ind = TRUE))
+	img_df <- anti_join(img_df, coords_transparent, by = join_by(row, col))
+	# img_df <- setdiff(img_df, coords_transparent)
 	if (nrow(img_df) > n_pixels) {
 		img_df <- img_df[round(seq(1, nrow(img_df), length.out = n_pixels)), ]
 	}
