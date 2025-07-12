@@ -21,6 +21,6 @@ for (url in urls) {
       message(paste("Failed to download", url, ":", e$message))
     })
   } else {
-  	message(paste("Skipping", filename))
+  	# message(paste("Skipping", filename))
   }
 }

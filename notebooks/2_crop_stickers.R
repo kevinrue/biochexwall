@@ -13,7 +13,7 @@ dir.create("img/stickers_cropped", showWarnings = FALSE, recursive = TRUE)
 for (infile in sticker_files) {
   output_file <- file.path("img/stickers_cropped", basename(infile))
   if (file.exists(output_file)) {
-    message("Skipping already processed file:", infile)
+    # message("Skipping already processed file:", infile)
     next
   }
   message("Processing ", infile)

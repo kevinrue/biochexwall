@@ -59,7 +59,7 @@ ggplot(image_xy_coords, aes(col, row)) +
 # keep_cols <- seq(5, max(image_xy_coords[, "col"]), by = downsample_x)
 
 ## same x and y with mathematical fix later
-downsample <- 24
+downsample <- 23
 keep_rows <- seq(max(image_xy_coords[, "row"]) - 5, 1, by = -downsample)
 keep_cols <- seq(5, max(image_xy_coords[, "col"]), by = downsample)
 
@@ -151,4 +151,8 @@ gg <- ggplot(final_df, aes(col, row)) +
 	theme(
 		plot.background = element_rect(fill = "white", color = NA)
 	)
-ggsave("img/outputs/biochexwall-sorted-600dpi.png", gg, width = 20, height = 20, dpi = 600)
+
+n_stickers <- nrow(sticker_ordered)
+n_hex <- nrow(final_df)
+
+ggsave(sprintf("img/outputs/biochexwall-%i-stickers-%i-hex.png", n_stickers, n_hex), gg, width = 20, height = 20, dpi = 600)

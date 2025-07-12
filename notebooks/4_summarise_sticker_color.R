@@ -1,7 +1,7 @@
 library(ggimage)
 library(dplyr)
 
-# One of
+# One of 'average'
 summary_mode <- "average"
 
 n_pixels <- scan("cache/sample_pixels.txt", what = double())
@@ -9,6 +9,10 @@ n_pixels <- scan("cache/sample_pixels.txt", what = double())
 sticker_files <- list.files("img/stickers_cropped", full.names = TRUE, pattern = "\\.png$")
 
 # image_file <- sticker_files[1]
+
+if (file.exists(sprintf("cache/sticker_colour.%s.txt", summary_mode))) {
+	sticker_stats <- read.table(sprintf("cache/sticker_colour.%s.txt", summary_mode), sep = "\t", header = TRUE)
+}
 
 make_data_frame <- function(image_file) {
 	message("Processing ", image_file)
@@ -29,6 +33,9 @@ make_data_frame <- function(image_file) {
 	rgb <- rgb(mean_colour[1], mean_colour[2], mean_colour[3])
 	data.frame(sticker = str_replace(basename(image_file), ".png", ""), colour = rgb)
 }
+
+sticker_files <- setdiff(sticker_files, sprintf("img/stickers_cropped/%s.png", sticker_stats$sticker))
+sticker_stats <- rbind(sticker_stats, do.call("rbind", lapply(sticker_files, make_data_frame)))
 
 sticker_stats <- do.call("rbind", lapply(sticker_files, make_data_frame))
 

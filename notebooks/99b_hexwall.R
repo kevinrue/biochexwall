@@ -103,4 +103,8 @@ gg <- ggplot(final_df, aes(x, y)) +
 	theme(
 		plot.background = element_rect(fill = "white", color = NA)
 	)
-ggsave("img/outputs/hexwall-sorted-600dpi.png", gg, width = 20, height = 20, dpi = 600)
+
+n_stickers <- nrow(sticker_ordered)
+n_hex <- nrow(final_df)
+
+ggsave(sprintf("img/outputs/hexwall-%i-stickers-%i-hex.png", n_stickers, n_hex), gg, width = 20, height = 20, dpi = 600)
