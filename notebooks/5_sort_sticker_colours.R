@@ -27,6 +27,7 @@ ordered_df <- sticker_colours_df[sol, ]
 # ordered_cols2 <- my_colours[order(lab[, 'L'])]
 
 ggplot() +
-	geom_tile(aes(x = 1, y = seq_along(ordered_df$colour)), fill = ordered_df$colour)
+	geom_tile(aes(x = 1, y = seq_along(ordered_df$colour)), fill = ordered_df$colour) +
+	theme_bw()
 
 write.table(ordered_df, file = "cache/sticker_colours_ordered.txt", sep = "\t", quote = TRUE, row.names = FALSE)

@@ -35,8 +35,7 @@ make_data_frame <- function(image_file) {
 }
 
 sticker_files <- setdiff(sticker_files, sprintf("img/stickers_cropped/%s.png", sticker_stats$sticker))
-sticker_stats <- rbind(sticker_stats, do.call("rbind", lapply(sticker_files, make_data_frame)))
-
-sticker_stats <- do.call("rbind", lapply(sticker_files, make_data_frame))
+new_stickers_stats <- do.call("rbind", lapply(sticker_files, make_data_frame))
+sticker_stats <- rbind(sticker_stats, new_stickers_stats)
 
 write.table(sticker_stats, sprintf("cache/sticker_colour.%s.txt", summary_mode), sep = "\t", quote = TRUE, row.names = FALSE)
