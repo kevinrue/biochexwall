@@ -1,6 +1,8 @@
 library(dplyr)
 library(ggimage)
 
+reverse <- TRUE
+
 image_file <- "img/biocnote-rh.png"
 sticker_files <- list.files("img/stickers_cropped", full.names = TRUE, pattern = "\\.png$")
 
@@ -134,8 +136,11 @@ ggplot(image_xy_coords_ordered, aes(col, row)) +
 sticker_ordered <- read.table("cache/sticker_colours_ordered.txt", header = TRUE)
 head(sticker_ordered)
 
+if (reverse) {
+  sticker_ordered <- sticker_ordered[rev(seq_len(nrow(sticker_ordered))),]
+}
+
 sticker_files_pool <- rep(sprintf("img/stickers_cropped/%s.png", sticker_ordered$sticker), 1 + nrow(image_xy_coords_downsampled) %/% length(sticker_files))
-sticker_files_pool <- sticker_files_pool[seq(length(sticker_files_pool), 1, -1)]
 sticker_files_pool <- sticker_files_pool[1:nrow(image_xy_coords_ordered)]
 
 final_df <- data.frame(
@@ -156,3 +161,5 @@ n_stickers <- nrow(sticker_ordered)
 n_hex <- nrow(final_df)
 
 ggsave(sprintf("img/outputs/biochexwall-%i-stickers-%i-hex.png", n_stickers, n_hex), gg, width = 20, height = 20, dpi = 600)
+
+rm(list = ls())

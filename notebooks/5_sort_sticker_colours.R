@@ -31,3 +31,5 @@ ggplot() +
 	theme_bw()
 
 write.table(ordered_df, file = "cache/sticker_colours_ordered.txt", sep = "\t", quote = TRUE, row.names = FALSE)
+
+rm(list = ls())

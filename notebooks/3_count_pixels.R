@@ -26,8 +26,12 @@ make_data_frame <- function(image_file) {
 }
 
 # make_vector(sticker_files[1])
-sticker_files <- setdiff(sticker_files, sprintf("img/stickers_cropped/%s.png", sticker_stats$sticker))
-sticker_stats <- rbind(sticker_stats, do.call("rbind", lapply(sticker_files, make_data_frame)))
+if (exists("sticker_stats")) {
+  sticker_files <- setdiff(sticker_files, sprintf("img/stickers_cropped/%s.png", sticker_stats$sticker))
+  sticker_stats <- rbind(sticker_stats, do.call("rbind", lapply(sticker_files, make_data_frame)))
+} else {
+  sticker_stats <- do.call("rbind", lapply(sticker_files, make_data_frame))
+}
 
 sticker_stats <- sticker_stats %>%
 	arrange(desc(pixels)) %>%
@@ -49,3 +53,5 @@ ggplot(sticker_stats, aes(sticker, pixels)) +
 	)
 
 write(q_pixels, file = "cache/sample_pixels.txt")
+
+rm(list = ls())

@@ -24,3 +24,5 @@ for (url in urls) {
   	# message(paste("Skipping", filename))
   }
 }
+
+rm(list = ls())
