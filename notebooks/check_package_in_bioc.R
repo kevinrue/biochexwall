@@ -11,7 +11,20 @@ urls <- grep("/master/Bioconductor/", urls, invert = TRUE, value = TRUE)
 urls <- grep("/master/boards/", urls, invert = TRUE, value = TRUE)
 names(urls) <- basename(dirname(urls))
 
-url_exists <- RCurl::url.exists(file.path("https://bioconductor.org/packages/", names(urls)))
-names(url_exists) <- names(urls)
+# url_exists <- RCurl::url.exists(file.path("https://bioconductor.org/packages/", names(urls)))
+# names(url_exists) <- names(urls)
 
-table(url_exists)
+# table(url_exists)
+
+library(BiocPkgTools)
+dls <- BiocPkgTools::biocDownloadStats()
+
+pkg_in_bioc <- names(urls) %in% dls$Package
+
+table(pkg_in_bioc)
+if (any(!pkg_in_bioc)) {
+  message("The following packages are not in Bioconductor:")
+  print(names(urls)[!pkg_in_bioc])
+} else {
+  message("All packages are in Bioconductor.")
+}

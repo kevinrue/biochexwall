@@ -96,7 +96,7 @@ final_df <- data.frame(
 final_df$image <- sticker_files_pool
 
 gg <- ggplot(final_df, aes(x, y)) +
-	geom_image(aes(image = image), size = 0.055) +
+	geom_image(aes(image = image), size = 0.05) +
 	coord_fixed() +
 	labs(x = NULL, y = NULL) +
 	theme_void() +

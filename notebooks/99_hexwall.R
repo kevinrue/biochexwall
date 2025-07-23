@@ -1,7 +1,7 @@
 library(dplyr)
 library(ggimage)
 
-reverse <- TRUE
+reverse <- FALSE
 
 image_file <- "img/biocnote-rh.png"
 sticker_files <- list.files("img/stickers_cropped", full.names = TRUE, pattern = "\\.png$")
@@ -149,7 +149,7 @@ final_df <- data.frame(
 )
 
 gg <- ggplot(final_df, aes(col, row)) +
-	geom_image(aes(image = image), size = 0.022) +
+	geom_image(aes(image = image), size = 0.0215) +
 	coord_fixed() +
 	labs(x = NULL, y = NULL) +
 	theme_void() +
