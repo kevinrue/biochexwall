@@ -1,5 +1,7 @@
 library(dplyr)
+library(EBImage)
 library(ggimage)
+library(ggplot2)
 
 reverse <- FALSE
 
@@ -9,7 +11,7 @@ sticker_files <- list.files("img/stickers_cropped", full.names = TRUE, pattern =
 dir.create("img/outputs", showWarnings = FALSE)
 
 # use EBImage to read the image
-library(EBImage)
+
 img <- readImage(image_file)
 # Display the image
 # display(img)
@@ -42,7 +44,6 @@ image_data_plot <- t(image_data)[seq(nrow(image_data), 1, -1), ]
 #       main = "Heatmap of Image Data")
 
 # make a scatter plot using ggplot
-library(ggplot2)
 image_xy_coords <- which(image_data_plot > 0, arr.ind = TRUE)
 
 ggplot(image_xy_coords, aes(col, row)) +
