@@ -3,7 +3,7 @@ library(EBImage)
 library(ggimage)
 library(ggplot2)
 
-reverse <- FALSE
+reverse <- TRUE
 
 image_file <- "img/biocnote-rh.png"
 sticker_files <- list.files("img/stickers_cropped", full.names = TRUE, pattern = "\\.png$")
@@ -62,7 +62,7 @@ ggplot(image_xy_coords, aes(col, row)) +
 # keep_cols <- seq(5, max(image_xy_coords[, "col"]), by = downsample_x)
 
 ## same x and y with mathematical fix later
-downsample <- 23
+downsample <- 20
 keep_rows <- seq(max(image_xy_coords[, "row"]) - 5, 1, by = -downsample)
 keep_cols <- seq(5, max(image_xy_coords[, "col"]), by = downsample)
 
@@ -161,6 +161,7 @@ gg <- ggplot(final_df, aes(col, row)) +
 n_stickers <- nrow(sticker_ordered)
 n_hex <- nrow(final_df)
 
-ggsave(sprintf("img/outputs/biochexwall-%i-stickers-%i-hex.png", n_stickers, n_hex), gg, width = 20, height = 20, dpi = 600)
+ggsave(sprintf("img/outputs/biochexwall-%i-stickers-%i-hex.300dpi.png", n_stickers, n_hex), gg, width = 20, height = 20, dpi = 300)
+ggsave(sprintf("img/outputs/biochexwall-%i-stickers-%i-hex.600dpi.png", n_stickers, n_hex), gg, width = 20, height = 20, dpi = 600)
 
 rm(list = ls())
