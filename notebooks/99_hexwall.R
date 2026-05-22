@@ -3,7 +3,7 @@ library(EBImage)
 library(ggimage)
 library(ggplot2)
 
-reverse <- TRUE
+reverse <- FALSE
 
 image_file <- "img/biocnote-rh.png"
 sticker_files <- list.files("img/stickers_cropped", full.names = TRUE, pattern = "\\.png$")
@@ -150,7 +150,7 @@ final_df <- data.frame(
 )
 
 gg <- ggplot(final_df, aes(col, row)) +
-	geom_image(aes(image = image), size = 0.0215) +
+	geom_image(aes(image = image), size = 0.018) +
 	coord_fixed() +
 	labs(x = NULL, y = NULL) +
 	theme_void() +
@@ -161,7 +161,15 @@ gg <- ggplot(final_df, aes(col, row)) +
 n_stickers <- nrow(sticker_ordered)
 n_hex <- nrow(final_df)
 
+cat(sprintf("img/outputs/biochexwall-%i-stickers-%i-hex\n", n_stickers, n_hex))
 ggsave(sprintf("img/outputs/biochexwall-%i-stickers-%i-hex.300dpi.png", n_stickers, n_hex), gg, width = 20, height = 20, dpi = 300)
 ggsave(sprintf("img/outputs/biochexwall-%i-stickers-%i-hex.600dpi.png", n_stickers, n_hex), gg, width = 20, height = 20, dpi = 600)
+write.table(
+	x = sticker_ordered,
+	file = sprintf("img/outputs/biochexwall-%i-stickers-%i-hex.manifest.tsv", n_stickers, n_hex),
+	sep = "\t",
+	quote = FALSE,
+	row.names = FALSE
+)
 
 rm(list = ls())

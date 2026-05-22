@@ -19,7 +19,7 @@ for (infile in sticker_files) {
   message("Processing ", infile)
   nuc = readImage(infile)
   # display(nuc)
-  if (infile == "img/stickers/NanoMethViz.png") {
+  if (infile %in% c("img/stickers/NanoMethViz.png", "img/stickers/BiocAfrica.png", "img/stickers/BiocAfricaSeminars2026.png")) {
   	writeImage(nuc, output_file, type = "png")
     next
   }
