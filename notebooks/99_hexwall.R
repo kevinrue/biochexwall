@@ -171,5 +171,12 @@ write.table(
 	quote = FALSE,
 	row.names = FALSE
 )
+write.table(
+	x = final_df,
+	file = sprintf("img/outputs/biochexwall-%i-stickers-%i-hex.data.tsv", n_stickers, n_hex),
+	sep = "\t",
+	quote = FALSE,
+	row.names = FALSE
+)
 
 rm(list = ls())

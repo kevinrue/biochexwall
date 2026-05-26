@@ -39,6 +39,7 @@ if (exists("sticker_stats")) {
   new_stickers_stats <- do.call("rbind", lapply(sticker_files, make_data_frame))
   sticker_stats <- rbind(sticker_stats, new_stickers_stats)
 } else {
+  new_stickers_stats <- do.call("rbind", lapply(sticker_files, make_data_frame))
   sticker_stats <- new_stickers_stats
 }
 

@@ -20,6 +20,7 @@ for (infile in sticker_files) {
   nuc = readImage(infile)
   # display(nuc)
   if (infile %in% c("img/stickers/NanoMethViz.png", "img/stickers/BiocAfrica.png", "img/stickers/BiocAfricaSeminars2026.png")) {
+  	message("Copying ", infile)
   	writeImage(nuc, output_file, type = "png")
     next
   }
